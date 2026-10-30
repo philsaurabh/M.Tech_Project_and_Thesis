@@ -5,7 +5,7 @@
   /* ============================================================
      CONFIG — change REPO_URL if your repository has another name.
      ============================================================ */
-  const REPO_URL = "https://github.com/philsaurabh/MTech_Heart_Sound_Deep_Learning";
+  const REPO_URL = "https://github.com/philsaurabh/M.Tech_Project_and_Thesis";
   const BRANCH = "main";
 
   const $ = (s, r = document) => r.querySelector(s);
