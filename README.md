@@ -32,23 +32,4 @@ P. Bentley, G. Nordehn, M. Coimbra and S. Mannor, *The PASCAL Classifying Heart 
 
 ---
 
-## Publishing the project page (GitHub Pages)
-
-The page is static: `index.html`, `assets/` and `.nojekyll`.
-
-1. Put `index.html`, `assets/`, `.nojekyll` and this `README.md` in the repository root, next to the two `.py` files.
-2. If your repository is **not** named `MTech_Heart_Sound_Deep_Learning`, or your default branch is not `main`, edit `REPO_URL` and `BRANCH` at the top of `assets/js/main.js`, and the project-page URL above.
-3. Commit and push. Then go to **Settings → Pages → Build and deployment**, choose **Deploy from a branch**, select your default branch and the `/ (root)` folder, and save.
-4. The page goes live at `https://philsaurabh.github.io/<repository-name>/`.
-
-Preview locally with `python3 -m http.server 8000` and open http://localhost:8000.
-
-### What the page uses
-
-- **Results table and scatter plot:** thesis Table 4.1.
-- **Training curves:** parsed from the epoch logs saved in the two notebooks (`assets/js/histories.js`).
-- **Architecture explorer:** layer shapes and parameter counts from each model's `model.summary()`.
-- **Waveform figures:** cropped from the classification notebook's plots of PASCAL Set A.
-- **Heart-sound traces:** synthetic schematics drawn in the browser.
-
 No text, figures or tables from the published article are reproduced.
