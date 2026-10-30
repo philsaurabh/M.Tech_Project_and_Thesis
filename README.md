@@ -1,11 +1,11 @@
-# A Deep Learning Approach for Heart Sound Segmentation and Classification
+# M.Tech. Project: A Deep Learning Approach for Heart Sound Segmentation and Classification
 
 M.Tech (Information Technology) thesis, ABV-Indian Institute of Information Technology and Management, Gwalior, 2018–19.
-**Author:** Saurabh Sharma · **Supervisor:** Prof. Joydip Dhar
+**Author:** [Saurabh Sharma](https://sites.google.com/view/saurabh-sharma) · **Supervisor:** [Prof. Joydip Dhar](https://www.iiitm.ac.in/staff/faculty/prof-joydip-dhar)
 
 The thesis compares classical, convolutional, recurrent and hybrid CNN–RNN networks for classifying phonocardiogram (heart sound) recordings. Recurrent models fit the training data well but overfit. The CNN generalises well but underfits. Hybrid models combine the two, and **CNN-Bi-LSTM** is the best (92% training accuracy, 85% validation accuracy, 91.5% recall).
 
-**Project page:** https://philsaurabh.github.io/MTech_Heart_Sound_Deep_Learning/
+**Project page:** [https://philsaurabh.github.io/MTech_Heart_Sound_Deep_Learning](https://philsaurabh.github.io/M.Tech_Project_and_Thesis)/
 
 ## Code
 
@@ -24,12 +24,15 @@ The thesis compares classical, convolutional, recurrent and hybrid CNN–RNN net
 
 S. Sharma and J. Dhar, “Deep Learning Approach for Analysis of Artifacts in Heart Sound,” *Proceedings of the International Conference on Advances in Electronics, Electrical & Computational Intelligence (ICAEEC)*, 2019. Available on SSRN: https://ssrn.com/abstract=3577626 · doi:10.2139/ssrn.3577626
 
-The article is available from SSRN under the publisher's access terms. This repository does not redistribute it.
+### Note: The article is available from SSRN under the publisher's access terms. This repository does not redistribute it.
 
 ## Dataset credit
 
 P. Bentley, G. Nordehn, M. Coimbra and S. Mannor, *The PASCAL Classifying Heart Sounds Challenge 2011 (CHSC2011) Results*, http://www.peterjbentley.com/heartchallenge/
 
 ---
+## Contact
 
-No text, figures or tables from the published article are reproduced.
+please contact saurabh_2021cs30@iitp.ac.in for any discrepancy.
+
+### Note: No text, figures or tables from the published article are reproduced.
