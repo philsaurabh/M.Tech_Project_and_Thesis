@@ -5,7 +5,7 @@ M.Tech (Information Technology) thesis, ABV-Indian Institute of Information Tech
 
 The thesis compares classical, convolutional, recurrent and hybrid CNN–RNN networks for classifying phonocardiogram (heart sound) recordings. Recurrent models fit the training data well but overfit. The CNN generalises well but underfits. Hybrid models combine the two, and **CNN-Bi-LSTM** is the best (92% training accuracy, 85% validation accuracy, 91.5% recall).
 
-**Project page:** [https://philsaurabh.github.io/MTech_Heart_Sound_Deep_Learning](https://philsaurabh.github.io/M.Tech_Project_and_Thesis)/
+**Project page:** [https://philsaurabh.github.io/M.Tech_Project_and_Thesis](https://philsaurabh.github.io/M.Tech_Project_and_Thesis)/
 
 ## Code
 
