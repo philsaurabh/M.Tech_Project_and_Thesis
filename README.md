@@ -35,4 +35,6 @@ P. Bentley, G. Nordehn, M. Coimbra and S. Mannor, *The PASCAL Classifying Heart 
 
 please contact saurabh_2021cs30@iitp.ac.in for any discrepancy.
 
+---
+
 ### Note: No text, figures or tables from the published article are reproduced.
