@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Heart Sound Deep Learning</title>
+  <meta name="description" content="M.Tech thesis (ABV-IIITM Gwalior, 2019): segmenting and classifying heart sounds with CNNs, recurrent networks and hybrid CNN–RNN models on the PASCAL heart-sound benchmark.">
+  <meta property="og:title" content="A Deep Learning Approach for Heart Sound Segmentation and Classification">
+  <meta property="og:description" content="CNN, LSTM, GRU and hybrid CNN–RNN models for normal, murmur and artifact heart sounds. Interactive results and training curves.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M2 17h7l3-8 4 15 3-11 2 4h9' fill='none' stroke='%23be123c' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!--
+  ============================================================
+  EDIT THESE LINKS if your repository name differs.
+  Search this file for "REPO_URL" — every repository link is
+  marked with data-repo and is rewritten by assets/js/main.js
+  from the single constant at the top of that file.
+  ============================================================
+-->
+
+<header class="topbar">
+  <nav class="wrap topbar-inner">
+    <a href="#top" class="brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 17h7l3-8 4 15 3-11 2 4h9"/></svg>Heart Sound DL</a>
+    <ul class="nav-links">
+      <li><a href="#sounds">Heart sounds</a></li>
+      <li><a href="#method">Method</a></li>
+      <li><a href="#models">Models</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#publication">Publication</a></li>
+      <li><a href="#code">Code</a></li>
+    </ul>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+    </button>
+  </nav>
+</header>
+
+<main id="top">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">M.Tech Thesis · Information Technology · ABV-IIITM Gwalior · 2018–19</p>
+      <h1>A Deep Learning Approach for Heart Sound Segmentation and Classification</h1>
+      <p class="lede">Can a network tell a healthy heartbeat from a murmur, or from a recording ruined by noise? This thesis compares classical, convolutional, recurrent and hybrid CNN–RNN models on phonocardiogram (PCG) recordings and finds that the hybrids get the best of both.</p>
+      <p class="authors">
+        <strong>Saurabh Sharma</strong><br>
+        <span class="muted">Supervised by Prof. Joydip Dhar</span>
+      </p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="#publication">Publication</a>
+        <a class="btn" data-repo href="#">GitHub repository</a>
+        <a class="btn" href="#results">Results →</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <svg class="ecg" viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true"><path id="heroTrace" d=""/></svg>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">10</span><span class="stat-lbl">experiments</span></div>
+        <div class="stat"><span class="stat-num">92<small>%</small></span><span class="stat-lbl">training accuracy, CNN-Bi-LSTM</span></div>
+        <div class="stat"><span class="stat-num">85<small>%</small></span><span class="stat-lbl">validation accuracy, CNN-Bi-LSTM</span></div>
+        <div class="stat"><span class="stat-num">95<small>%</small></span><span class="stat-lbl">S1/S2 segmentation, training accuracy</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== OVERVIEW ===================== -->
+<section class="section" id="overview">
+  <div class="wrap narrow">
+    <h2>Overview</h2>
+    <p>Cardiovascular disease is one of the leading causes of death worldwide, and listening to the heart is still one of the cheapest first checks a clinician can make. A heartbeat is a pair of sounds, <strong>S1</strong> (“lub”) and <strong>S2</strong> (“dub”). Disease, or simply a bad recording, adds extra sounds on top of that rhythm.</p>
+    <p>The thesis has two goals. The first is to <strong>segment</strong> a recording into its S1 and S2 sounds. The second is to <strong>classify</strong> recordings into normal and abnormal variants: murmurs, extra heart sounds, extrasystoles and artifacts. Ten experiments are run on public benchmark recordings: an empirical-wavelet baseline, an SVM, a modified segmentation CNN, a deep CNN, LSTM, GRU and Bi-LSTM networks, and three hybrid CNN–RNN networks.</p>
+    <p>The pattern is consistent. Recurrent models fit the training data well but generalise poorly. The CNN generalises well but underfits. Putting a convolutional feature extractor in front of a recurrent layer gives both, and <strong>CNN-Bi-LSTM</strong> is the best model overall.</p>
+    <p class="keywords"><span>Heart sounds</span><span>Phonocardiogram</span><span>Deep learning</span><span>Hybrid neural networks</span><span>Sequence models</span><span>Classification</span></p>
+  </div>
+</section>
+
+<!-- ===================== HEART SOUNDS ===================== -->
+<section class="section alt" id="sounds">
+  <div class="wrap">
+    <h2>What the models listen for</h2>
+    <p class="section-lede">Each category leaves a different signature on the waveform. Pick one to see a simplified trace. The traces are synthetic sketches of the pattern, not patient recordings.</p>
+
+    <div class="sound-explorer">
+      <div class="chip-row" id="soundTabs" role="tablist"></div>
+      <div class="sound-card">
+        <svg class="sound-svg" id="soundSvg" viewBox="0 0 800 180" preserveAspectRatio="none" role="img" aria-labelledby="soundTitle"><title id="soundTitle">Schematic heart sound trace</title></svg>
+        <div class="sound-meta">
+          <div>
+            <h3 id="soundName">Normal</h3>
+            <p id="soundDesc"></p>
+          </div>
+          <div class="pattern"><span class="muted small">Pattern</span><code id="soundPattern"></code></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="mt">From the data</h3>
+    <p class="section-lede">Real recordings from PASCAL Set A, plotted in the classification notebook. Each panel is one file.</p>
+    <div class="wave-grid">
+      <figure class="fig"><img src="assets/figures/wave-normal.png" alt="Twelve normal heart sound recordings: regular, evenly spaced beats" loading="lazy"><figcaption><span class="dot c2"></span><b>Normal.</b> Regular, evenly spaced beats.</figcaption></figure>
+      <figure class="fig"><img src="assets/figures/wave-murmur.png" alt="Twelve murmur recordings: beats with energy filling the gaps between them" loading="lazy"><figcaption><span class="dot c3"></span><b>Murmur.</b> Energy fills the gaps between beats.</figcaption></figure>
+      <figure class="fig"><img src="assets/figures/wave-artifact.png" alt="Twelve artifact recordings: irregular bursts, clipping and silence" loading="lazy"><figcaption><span class="dot c1"></span><b>Artifact.</b> Clipping, bursts and silence with no cardiac rhythm.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GAPS & OBJECTIVES ===================== -->
+<section class="section">
+  <div class="wrap">
+    <h2>Research gaps</h2>
+    <p class="section-lede">A review of HMM, time–frequency, wavelet, ANN/SVM and recurrent-network approaches found four gaps.</p>
+    <div class="cards">
+      <article class="card"><span class="card-n">01</span><h3>Deep learning used for segmentation only</h3><p>Prior work leaned on hand-crafted features (HMMs, wavelets, entropy). Deep networks had been used to locate S1/S2, not to classify the abnormality.</p></article>
+      <article class="card"><span class="card-n">02</span><h3>Small datasets</h3><p>Several studies were evaluated on small private sets, so their results may not transfer to larger data.</p></article>
+      <article class="card"><span class="card-n">03</span><h3>Narrow label sets</h3><p>Most work separates normal from abnormal, or sub-types murmurs. Extra heart sounds, extrasystoles and artifacts were largely ignored.</p></article>
+      <article class="card"><span class="card-n">04</span><h3>Room to optimise</h3><p>Several existing classifiers had modest accuracy, leaving space for architectures built for the problem.</p></article>
+    </div>
+    <div class="objective">
+      <h3>Objective</h3>
+      <p>Segment heart sounds into <strong>S1</strong> and <strong>S2</strong>, then classify recordings into seven categories: innocent murmur, noisy innocent murmur, abnormal murmur, noisy abnormal murmur, extra heart sound, extrasystole and artifact. Recordings that fit none of these are set aside as unclassified.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== METHOD ===================== -->
+<section class="section alt" id="method">
+  <div class="wrap">
+    <h2>Method</h2>
+    <p class="section-lede">Every model sees the same pre-processed signal. Only the network in the middle changes.</p>
+
+    <figure class="pipeline-card">
+      <svg viewBox="0 0 1000 200" class="pipeline" role="img" aria-labelledby="pipeTitle">
+        <title id="pipeTitle">Work-flow: raw PCG data, pre-processing, deep learning model, training and testing, performance metrics</title>
+        <defs><marker id="pa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+        <g class="pnode"><rect x="10" y="60" width="150" height="80" rx="12"/><text x="85" y="95">Raw PCG</text><text x="85" y="115" class="sub">PASCAL · PhysioNet</text></g>
+        <g class="pnode hl"><rect x="210" y="40" width="180" height="120" rx="12"/><text x="300" y="72">Pre-processing</text><text x="300" y="96" class="sub">reshape · normalise</text><text x="300" y="114" class="sub">axes · decimate</text><text x="300" y="132" class="sub">CNN segmentation</text></g>
+        <g class="pnode hl2"><rect x="440" y="40" width="180" height="120" rx="12"/><text x="530" y="72">Deep model</text><text x="530" y="96" class="sub">feature extraction</text><text x="530" y="114" class="sub">+ classification</text><text x="530" y="132" class="sub">CNN · RNN · hybrid</text></g>
+        <g class="pnode"><rect x="670" y="60" width="140" height="80" rx="12"/><text x="740" y="95">Train / test</text><text x="740" y="115" class="sub">supervised</text></g>
+        <g class="pnode"><rect x="860" y="60" width="130" height="80" rx="12"/><text x="925" y="95">Metrics</text><text x="925" y="115" class="sub">acc · recall · loss</text></g>
+        <g class="parrows"><line x1="160" y1="100" x2="206" y2="100" marker-end="url(#pa)"/><line x1="390" y1="100" x2="436" y2="100" marker-end="url(#pa)"/><line x1="620" y1="100" x2="666" y2="100" marker-end="url(#pa)"/><line x1="810" y1="100" x2="856" y2="100" marker-end="url(#pa)"/></g>
+      </svg>
+      <figcaption>Work-flow of the proposed solution, redrawn. Choosing and training the model is where most of the work goes.</figcaption>
+    </figure>
+
+    <div class="two-col mt">
+      <div>
+        <h3>Pre-processing, as implemented</h3>
+        <ol class="steps">
+          <li><b>Reshape.</b> Every 44.1 kHz recording is tiled to the length of the longest clip, so all samples share one shape.</li>
+          <li><b>Decimate.</b> Three zero-phase decimation passes (×8, ×8, ×4) downsample by 256×, giving a 1,551-sample sequence per recording.</li>
+          <li><b>Normalise.</b> Each sequence is scaled to unit variance.</li>
+          <li><b>Axes.</b> A channel axis is added for 1-D convolutions, giving (1551, 1). Recurrent models get the signal reshaped to (1, 1551).</li>
+          <li><b>Augment.</b> For the deep CNN, each training batch is circularly shifted by a random offset, so the network cannot rely on where the first beat falls.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Data</h3>
+        <p>The thesis draws on the <a href="http://www.peterjbentley.com/heartchallenge/">PASCAL Classifying Heart Sounds Challenge</a> and the <a href="https://physionet.org/content/challenge-2016/">PhysioNet/CinC 2016</a> database: 176 recordings for segmentation and 832 for classification, from people aged 18–90, with an 85/15 train–test split.</p>
+        <p>The released notebooks run on <strong>PASCAL Set A</strong>: 176 recordings, re-labelled into three classes. That includes the 52 unlabelled files, which were labelled by inspecting their waveforms.</p>
+        <div class="stack-chart" id="classChart" aria-label="Class composition of the 176 Set A recordings"></div>
+        <p class="small muted">Original Set A labels: 40 artifact, 31 normal, 34 murmur, 19 extra heart sound (merged into normal), 52 unlabelled.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MODELS ===================== -->
+<section class="section" id="models">
+  <div class="wrap">
+    <h2>Model architectures</h2>
+    <p class="section-lede">Layer stacks as defined in the notebooks, with output shapes and parameter counts from <code>model.summary()</code>. The hybrid models share one convolutional front-end and differ only in their recurrent layer.</p>
+    <div class="chip-row" id="archTabs" role="tablist"></div>
+    <div class="arch">
+      <div class="arch-stack" id="archStack"></div>
+      <aside class="arch-side">
+        <h3 id="archName"></h3>
+        <p id="archWhy"></p>
+        <dl class="kv">
+          <dt>Parameters</dt><dd id="archParams"></dd>
+          <dt>Input</dt><dd id="archInput"></dd>
+          <dt>Optimiser</dt><dd id="archOpt"></dd>
+        </dl>
+        <div class="legend-mini">
+          <span><i class="lt conv"></i>Convolution</span><span><i class="lt rec"></i>Recurrent</span><span><i class="lt pool"></i>Pooling / norm</span><span><i class="lt drop"></i>Dropout</span><span><i class="lt dense"></i>Dense</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RESULTS ===================== -->
+<section class="section alt" id="results">
+  <div class="wrap">
+    <h2>Results</h2>
+    <p class="section-lede">Training accuracy measures how well a model fits the data it learned from; validation accuracy measures how well it generalises. The distance between them is the story of this thesis.</p>
+
+    <div class="results-grid">
+      <figure class="chart-card">
+        <figcaption class="chart-title">Training vs validation accuracy <span class="muted">· thesis Table 4.1</span></figcaption>
+        <div class="legend" id="scatterLegend"></div>
+        <div class="chart-wrap scatter-wrap" id="scatter"></div>
+        <p class="small muted">Points on the dashed line generalise as well as they fit. Points far below it are overfitting.</p>
+      </figure>
+      <div class="insights">
+        <div class="insight"><span class="ins-k">Recurrent</span><p>LSTM, GRU and Bi-LSTM reach 90–92% training accuracy but only 30–40% on validation: they memorise the training set.</p></div>
+        <div class="insight"><span class="ins-k">Convolutional</span><p>The deep CNN is the reverse: it validates almost as well as it trains (77% vs 79%), but plateaus lower.</p></div>
+        <div class="insight win"><span class="ins-k">Hybrid</span><p>A CNN front-end feeding a recurrent layer closes the gap. CNN-Bi-LSTM reaches 92% training and 85% validation accuracy, with 91.5% recall.</p></div>
+      </div>
+    </div>
+
+    <h3 class="mt">All experiments</h3>
+    <div class="tbl-scroll">
+      <table class="tbl sortable" id="resultsTable">
+        <thead><tr>
+          <th data-k="name">Model</th><th data-k="family">Family</th>
+          <th data-k="acc" class="num">Accuracy %</th><th data-k="val" class="num">Val. accuracy %</th>
+          <th data-k="gap" class="num">Gap (pts)</th><th data-k="recall" class="num">Recall %</th>
+          <th data-k="loss" class="num">Loss</th><th data-k="vloss" class="num">Val. loss</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="small muted">Click a column to sort. The S1/S2 segmentation CNN, reported separately, reaches 95–96% training accuracy with a loss of 0.085. The SVM was scored on accuracy only.</p>
+
+    <h3 class="mt">Training curves</h3>
+    <p class="section-lede">Re-plotted epoch by epoch from the training logs saved in the two notebooks. These are single runs, so the final numbers differ slightly from the thesis table. The notebooks also include Simple RNN, Bi-GRU and Bi-RNN runs that the thesis does not report.</p>
+    <figure class="chart-card">
+      <div class="curve-controls">
+        <div class="chip-row" id="curveModels"></div>
+        <div class="seg" id="curveMetric" role="tablist">
+          <button class="active" data-m="acc">Accuracy</button><button data-m="loss">Loss</button><button data-m="recall">Recall</button>
+        </div>
+      </div>
+      <div class="legend" id="curveLegend"></div>
+      <div class="chart-wrap curve-wrap" id="curve"></div>
+      <p class="small muted" id="curveNote"></p>
+    </figure>
+  </div>
+</section>
+
+<!-- ===================== CONCLUSIONS ===================== -->
+<section class="section" id="conclusion">
+  <div class="wrap">
+    <h2>Findings</h2>
+    <div class="two-col">
+      <ol class="findings">
+        <li><strong>CNNs extract features and validate well.</strong> Convolutions pick out the pitch and amplitude cues that separate S1 from S2 and one class from another.</li>
+        <li><strong>RNNs fit the training data best.</strong> LSTM and Bi-LSTM post the highest training accuracies but overfit.</li>
+        <li><strong>Hybrids combine the two.</strong> A CNN front-end with a recurrent back-end keeps the CNN's generalisation and the RNN's fit.</li>
+        <li><strong>CNN-Bi-LSTM is the best model</strong>, with 92% training accuracy, 85% validation accuracy and 91.5% recall. It matches the wavelet baseline while being much simpler to implement.</li>
+      </ol>
+      <div class="side-stack">
+        <div class="note-card">
+          <h3>Limitations</h3>
+          <p>Deep audio models want far more data than public heart-sound sets provide, and recurrent models need GPU time to train well. The study works within that hardware–data trade-off.</p>
+        </div>
+        <div class="note-card future">
+          <h3>Future scope</h3>
+          <ul class="plain">
+            <li>Newer architectures applied to the full range of murmurs.</li>
+            <li>Larger datasets for more reliable classification.</li>
+            <li>Moving from sound category to disease prediction.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PUBLICATION ===================== -->
+<section class="section alt" id="publication">
+  <div class="wrap">
+    <h2>Publication</h2>
+    <div class="pub">
+      <div class="pub-main">
+        <p class="pub-venue" id="pubVenue">Proceedings of the International Conference on Advances in Electronics, Electrical &amp; Computational Intelligence (ICAEEC), 2019</p>
+        <h3 class="pub-title">Deep Learning Approach for Analysis of Artifacts in Heart Sound</h3>
+        <p class="pub-authors">Saurabh Sharma, Joydip Dhar</p>
+        <p>The paper narrows the thesis to one question: can deep networks separate genuine heart sounds from <em>artifacts</em>, meaning recordings corrupted by speech, echoes, feedback or other noise? It frames the task as three classes (normal, abnormal and artifact) on the PASCAL benchmark and compares the same CNN, recurrent and hybrid model families. The hybrid CNN-Bi-LSTM again comes out on top.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3577626">Read on SSRN ↗</a>
+          <a class="btn" href="https://doi.org/10.2139/ssrn.3577626">doi:10.2139/ssrn.3577626</a>
+        </div>
+        <p class="pub-notice">The published article is available from SSRN under the publisher's access terms. This page describes the work in the author's own words and does not reproduce the article's text, figures or tables. Please cite and read the published version.</p>
+      </div>
+      <div class="pub-side">
+        <h4>Cite the paper</h4>
+<pre class="code cite" id="bibPaper"><code>@inproceedings{sharma2019artifacts,
+  title     = {Deep Learning Approach for Analysis
+               of Artifacts in Heart Sound},
+  author    = {Sharma, Saurabh and Dhar, Joydip},
+  booktitle = {Proceedings of the International
+               Conference on Advances in Electronics,
+               Electrical \& Computational
+               Intelligence (ICAEEC)},
+  year      = {2019},
+  doi       = {10.2139/ssrn.3577626},
+  url       = {https://ssrn.com/abstract=3577626}
+}</code></pre>
+        <button class="btn btn-sm" data-copy="bibPaper">Copy BibTeX</button>
+        <h4 class="mt-sm">Cite the thesis</h4>
+<pre class="code cite" id="bibThesis"><code>@mastersthesis{sharma2019heartsound,
+  title  = {A Deep Learning Approach for Heart
+            Sound Segmentation and Classification},
+  author = {Sharma, Saurabh},
+  school = {ABV-Indian Institute of Information
+            Technology and Management, Gwalior},
+  type   = {M.Tech. Thesis},
+  year   = {2019}
+}</code></pre>
+        <button class="btn btn-sm" data-copy="bibThesis">Copy BibTeX</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CODE ===================== -->
+<section class="section" id="code">
+  <div class="wrap">
+    <h2>Code &amp; reproducibility</h2>
+    <div class="two-col">
+      <div>
+        <h3>Repository</h3>
+<pre class="tree"><code>.
+├── <a data-repo-file="mtp-on-heartbeat-sound.py" href="#">mtp-on-heartbeat-sound.py</a>
+│     <span class="c"># data loading, labelling, waveform plots,</span>
+│     <span class="c"># Deep CNN, LSTM, Simple RNN, GRU,</span>
+│     <span class="c"># Bi-LSTM, Bi-GRU, Bi-RNN</span>
+├── <a data-repo-file="mtp-on-heartbeat-sound-hybrid.py" href="#">mtp-on-heartbeat-sound-hybrid.py</a>
+│     <span class="c"># CNN-LSTM, CNN-GRU, CNN-Bi-LSTM</span>
+├── index.html  ·  assets/   <span class="c"># this page</span>
+└── README.md</code></pre>
+        <h3>Running it</h3>
+        <ol class="steps">
+          <li>Download the <a href="https://www.kaggle.com/datasets/kinguistics/heartbeat-sounds">Heartbeat Sounds</a> dataset (PASCAL Sets A and B) and place it so that <code>../input/set_a.csv</code> and <code>../input/set_a/</code> exist. This is the layout the scripts expect, and it matches a Kaggle notebook.</li>
+          <li>Use the original environment: Python 3.6, Keras 2.2 on a TensorFlow 1.x backend, with SciPy, scikit-learn, pandas and matplotlib.</li>
+          <li>Run the classification script first, then the hybrid script. Training curves are drawn at the end of each model block.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>The best model: CNN-Bi-LSTM</h3>
+<pre class="code"><code>model = Sequential()
+model.add(InputLayer(input_shape=x_train.shape[1:]))
+<span class="c"># convolutional front-end: features</span>
+model.add(Conv1D(32, kernel_size=3, padding=<span class="s">'same'</span>, activation=<span class="s">'relu'</span>))
+model.add(MaxPool1D(pool_size=3)); model.add(Dropout(0.3))
+model.add(Conv1D(64, kernel_size=3, padding=<span class="s">'same'</span>, activation=<span class="s">'relu'</span>))
+model.add(MaxPool1D(pool_size=3)); model.add(Dropout(0.35))
+model.add(Conv1D(128, kernel_size=3, padding=<span class="s">'same'</span>, activation=<span class="s">'relu'</span>))
+model.add(MaxPool1D(pool_size=3)); model.add(Dropout(0.4))
+<span class="c"># recurrent back-end: temporal context, both directions</span>
+model.add(Bidirectional(LSTM(50, return_sequences=<span class="k">True</span>)))
+model.add(Dropout(0.25))
+model.add(Flatten())
+model.add(Dense(128, activation=<span class="s">'relu'</span>)); model.add(Dropout(0.45))
+model.add(Dense(3, activation=<span class="s">'softmax'</span>))
+model.compile(loss=<span class="s">'categorical_crossentropy'</span>, optimizer=<span class="s">'adam'</span>,
+              metrics=[<span class="s">'acc'</span>, recall])</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>ABV-Indian Institute of Information Technology and Management, Gwalior · M.Tech (IT) 2018–19</span>
+    <span>Data: PASCAL Classifying Heart Sounds Challenge (Bentley et al., 2011).</span>
+  </div>
+</footer>
+
+<div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+<div class="lightbox" id="lightbox" aria-hidden="true"><button class="lb-close" aria-label="Close">×</button><img alt=""><p class="lb-cap"></p></div>
+
+<script src="assets/js/histories.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
